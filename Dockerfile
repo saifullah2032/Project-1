@@ -13,5 +13,5 @@ COPY ./nginx/default.conf /etc/nginx/sites-available/default
 # Expose the necessary ports
 EXPOSE 80
 
-# Start Nginx and PHP-FPM together
+# Run both services
 CMD service nginx start && php-fpm
