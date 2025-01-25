@@ -1,21 +1,20 @@
-# Use the official PHP image with FPM
-FROM php:8.1-fpm
+# Use the official PHP image with Apache
+FROM php:8.1-apache
 
-# Install necessary packages (nginx and dependencies)
+# Install any required dependencies
 RUN apt-get update && apt-get install -y \
-    nginx \
     curl \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the website's code to the container
+# Copy your website files to the container
 COPY . /var/www/html/
 
-# Copy nginx configuration file
-COPY ./nginx/default.conf /etc/nginx/sites-available/default
-
-# Expose port 80 for the application
+# Expose the default Apache port
 EXPOSE 80
 
-# Start nginx and PHP-FPM (this starts PHP-FPM in the background and Nginx in the foreground)
-CMD service nginx start && php-fpm -F
+# Enable mod_rewrite for clean URLs (if needed for your project)
+RUN a2enmod rewrite
+
+# Set the entrypoint to run Apache in the foreground
+CMD ["apache2-foreground"]
