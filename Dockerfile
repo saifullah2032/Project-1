@@ -1,17 +1,19 @@
-# Use the official PHP image with FPM (FastCGI Process Manager)
+# Use the official PHP image
 FROM php:8.1-fpm
 
-# Install dependencies for PHP and Nginx
-RUN apt-get update && apt-get install -y nginx
+# Install nginx and php-fpm
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    apt-get install -y php-fpm
 
-# Copy the application files into the Nginx document root
+# Copy application files to the container
 COPY . /var/www/html/
 
-# Copy the custom Nginx configuration
+# Copy Nginx configuration
 COPY ./nginx/default.conf /etc/nginx/sites-available/default
 
-# Expose the necessary ports
+# Expose port 80 for HTTP traffic
 EXPOSE 80
 
-# Run both services
-CMD service nginx start && php-fpm
+# Start Nginx and PHP-FPM in the foreground
+CMD service nginx start && php-fpm -F
