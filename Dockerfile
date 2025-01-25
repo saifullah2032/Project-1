@@ -1,17 +1,17 @@
-# Use the official PHP image with Apache
-FROM php:8.1-apache
+# Use the official PHP image with FPM (FastCGI Process Manager)
+FROM php:8.1-fpm
 
-# Install any dependencies (like GD for image handling)
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
-    && a2enmod rewrite
+# Install dependencies for PHP and Nginx
+RUN apt-get update && apt-get install -y nginx
 
-# Copy the application files into the Apache server's document root
+# Copy the application files into the Nginx document root
 COPY . /var/www/html/
 
-# Expose port 80 for web traffic
+# Copy the custom Nginx configuration
+COPY ./nginx/default.conf /etc/nginx/sites-available/default
+
+# Expose the necessary ports
 EXPOSE 80
 
-# Command to run Apache in the foreground
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# Start Nginx and PHP-FPM together
+CMD service nginx start && php-fpm
