@@ -1,17 +1,14 @@
 # Use the official PHP image with Apache
 FROM php:8.1-apache
 
-# Install required PHP extensions
-RUN docker-php-ext-install mysqli
-
-# Copy the code into the container
+# Copy the application files to the container's web directory
 COPY . /var/www/html/
 
-# Set the working directory
-WORKDIR /var/www/html/
+# Enable Apache mod_rewrite (common for PHP apps)
+RUN a2enmod rewrite
 
-# Expose port 80 to the outside world
+# Expose port 80
 EXPOSE 80
 
-# Start the Apache server (with PHP) on port 80
+# Start Apache in the foreground (this is the default behavior)
 CMD ["apache2-foreground"]
