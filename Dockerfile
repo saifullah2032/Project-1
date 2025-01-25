@@ -1,13 +1,11 @@
-# Use the official PHP image with Apache
+# Use an image with both PHP and Apache (from official PHP Docker images)
 FROM php:8.1-apache
 
-# Install required PHP extensions (optional, if needed)
+# Install Apache and PHP extensions if required
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
+    apache2 \
+    libapache2-mod-php \
+    && apt-get clean
 
 # Copy your website files to the container
 COPY . /var/www/html/
@@ -18,5 +16,5 @@ RUN a2enmod rewrite
 # Expose the default Apache port
 EXPOSE 80
 
-# Start Apache explicitly in the foreground
-CMD ["apachectl", "-D", "FOREGROUND"]
+# Set the start command to ensure Apache runs in the foreground
+CMD ["apache2ctl", "-D", "FOREGROUND"]
